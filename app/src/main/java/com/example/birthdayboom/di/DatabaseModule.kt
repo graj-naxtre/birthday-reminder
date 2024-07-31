@@ -20,7 +20,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideBirthdayEntityDao(db: AppDatabase) : BirthdayEntityDao {
+    fun provideBirthdayEntityDao(db: AppDatabase): BirthdayEntityDao {
         return db.birthdayEntityDao()
     }
 }

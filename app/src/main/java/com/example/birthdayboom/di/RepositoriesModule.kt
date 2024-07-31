@@ -2,6 +2,7 @@ package com.example.birthdayboom.di
 
 import android.content.Context
 import com.example.birthdayboom.data.database.dao.BirthdayEntityDao
+import com.example.birthdayboom.data.database.db.AppDatabase
 import com.example.birthdayboom.data.database.mappers.BirthdayBiMapper
 import com.example.birthdayboom.data.repositories.AppRepository
 import com.example.birthdayboom.data.repositories.AppRepositoryImpl
@@ -11,7 +12,6 @@ import com.example.birthdayboom.utils.NotificationHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -30,14 +30,16 @@ object RepositoriesModule {
     fun providesBirthdayRepository(
         birthdayEntityDao: BirthdayEntityDao,
         birthdayBiMapper: BirthdayBiMapper
-    ) : BirthdayRepository = BirthdayRepositoryImpl(birthdayEntityDao, birthdayBiMapper)
+    ): BirthdayRepository = BirthdayRepositoryImpl(birthdayEntityDao, birthdayBiMapper)
 
     @Provides
     @Singleton
     fun providesAppRepository(
         @ApplicationContext context: Context,
-        birthdayEntityDao: BirthdayEntityDao
-    ) : AppRepository = AppRepositoryImpl(context = context, birthdayEntityDao = birthdayEntityDao)
+        birthdayEntityDao: BirthdayEntityDao,
+        db: AppDatabase
+    ): AppRepository =
+        AppRepositoryImpl(context = context, birthdayEntityDao = birthdayEntityDao, db = db)
 
     @Provides
     @Singleton

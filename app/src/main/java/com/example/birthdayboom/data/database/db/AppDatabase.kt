@@ -8,7 +8,7 @@ import com.example.birthdayboom.data.database.dao.BirthdayEntityDao
 import com.example.birthdayboom.data.database.entity.BirthdayEntity
 
 
-@Database(entities = [BirthdayEntity::class], version = 1, exportSchema = false)
+@Database(entities = [BirthdayEntity::class], version = 1, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun birthdayEntityDao(): BirthdayEntityDao
 

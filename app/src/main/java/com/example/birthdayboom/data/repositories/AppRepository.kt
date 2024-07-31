@@ -1,9 +1,12 @@
 package com.example.birthdayboom.data.repositories
 
-import android.content.Intent
+import android.net.Uri
 
 interface AppRepository {
-    suspend fun exportData() : Intent?
 
     suspend fun importData()
+
+    suspend fun exportToCSVFile(): Boolean
+
+    suspend fun moveCSVFileToExternal(uri: Uri)
 }

@@ -98,7 +98,8 @@ fun BirthdayBoomApp() {
 // make call and message to actual phone number
 // search by name functionality
 // list all birthday months in order [rotate elements by D position]
-
 // post notification (un-dismissible)
+
+// onCardClick open drawer
 // export and import data
 // add image to profiles

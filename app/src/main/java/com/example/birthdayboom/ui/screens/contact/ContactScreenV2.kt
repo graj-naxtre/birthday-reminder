@@ -31,6 +31,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.birthdayboom.R
+import com.example.birthdayboom.data.database.models.UIBirthdayData
 import com.example.birthdayboom.ui.navigations.navgraph.ContactNavigationEvent
 import com.example.birthdayboom.ui.screens.birthday.components.ContactCard
 import com.example.birthdayboom.ui.screens.contact.components.ContactHeader
@@ -44,17 +45,21 @@ fun ContactScreenV2(
     viewModel: ContactViewModel = hiltViewModel()
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val drawerData = remember {
+        mutableStateOf(UIBirthdayData())
+    }
+
     val scope = rememberCoroutineScope()
-    var searchText by remember { mutableStateOf("")}
+    var searchText by remember { mutableStateOf("") }
 
     val contacts by viewModel.allBirthdayContacts.collectAsState()
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         viewModel.fetchAllContacts()
     }
 
-    LaunchedEffect(searchText){
-        if(searchText.isNotEmpty()){
+    LaunchedEffect(searchText) {
+        if (searchText.isNotEmpty()) {
             delay(1500)
             Log.d("SearchField", searchText)
             viewModel.searchByContactName(searchText)
@@ -62,12 +67,16 @@ fun ContactScreenV2(
             viewModel.showAllContacts()
         }
     }
-
+// Calendar.getInstance().get(Calendar.YEAR) - drawerData.value.birthdate.split("-")[2].toInt()
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
-                ProfileScreenV2(onClose = { scope.launch { drawerState.close() } })
+                ProfileScreenV2(
+                    data = drawerData.value,
+                    age = drawerData.value.birthdate,
+                    onClose = { scope.launch { drawerState.close() } }
+                )
             }
         }
     ) {
@@ -97,12 +106,21 @@ fun ContactScreenV2(
                     .background(Color.White)
                     .padding(horizontal = 16.dp)
             ) {
-                LazyColumn(contentPadding = PaddingValues(bottom = 100.dp)){
+                LazyColumn(contentPadding = PaddingValues(bottom = 100.dp)) {
                     item {
-                        ContactCard(cardClick = { scope.launch { drawerState.open() } }, notificationClick = {viewModel.notifyUser("Satya Raj")})
+                        ContactCard(
+                            cardClick = { scope.launch { drawerState.open() } },
+                            notificationClick = { viewModel.notifyUser("Satya Raj") })
                     }
                     items(items = contacts) {
-                        ContactCard(title = it.name, subtitle = it.birthdate)
+                        ContactCard(
+                            title = it.name,
+                            subtitle = it.birthdate,
+                            cardClick = {
+                                drawerData.value = it
+                                scope.launch { drawerState.open() }
+                            }
+                        )
                     }
                 }
             }

@@ -1,7 +1,6 @@
 package com.example.birthdayboom.ui.screens.profile
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,17 +20,20 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.birthdayboom.data.database.models.UIBirthdayData
 
 
 @Composable
-fun ProfileScreenV2(onClose: () -> Unit) {
+fun ProfileScreenV2(
+    data: UIBirthdayData,
+    age: String,
+    onClose: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,8 +49,8 @@ fun ProfileScreenV2(onClose: () -> Unit) {
                 Icon(imageVector = Icons.Outlined.Create, contentDescription = null)
             }
         }
-        Row (modifier = Modifier.fillMaxWidth()){
-            Column (modifier = Modifier.padding(horizontal = 16.dp)){
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 ElevatedCard(
                     shape = CircleShape,
                     modifier = Modifier
@@ -62,11 +64,11 @@ fun ProfileScreenV2(onClose: () -> Unit) {
                     }
                 }
             }
-            Column (verticalArrangement = Arrangement.spacedBy(20.dp)){
-                NameCard()
-                DetailField(label = "BIRTHDATE", value = "Jan. 19, 1997")
-                DetailField(label = "AGE", value = "27 Years Old")
-                DetailField(label = "PHONE NUMBER", value = "6206119968")
+            Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                NameCard(name = data.name)
+                DetailField(label = "BIRTHDATE", value = data.birthdate)
+                DetailField(label = "AGE", value = "$age Years Old")
+                DetailField(label = "PHONE NUMBER", value = data.mobileNumber)
             }
         }
     }
@@ -81,15 +83,15 @@ fun DetailField(label: String, value: String) {
 }
 
 @Composable
-fun NameCard() {
+fun NameCard(name: String = "Satya Raj", birthdayDetails: String = "Feb. 29 in 41 days") {
     Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
         Text(
-            text = "Satya Raj",
+            text = name,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "Feb. 29 in 41 days",
+            text = birthdayDetails,
             style = MaterialTheme.typography.titleMedium,
             color = Color.DarkGray
         )
