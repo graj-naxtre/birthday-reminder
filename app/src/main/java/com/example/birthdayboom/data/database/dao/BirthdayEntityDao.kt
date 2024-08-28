@@ -4,12 +4,16 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RawQuery
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.example.birthdayboom.data.database.entity.BirthdayEntity
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
 @Dao
 interface BirthdayEntityDao {
+    @RawQuery
+    fun insertDataRawFormat(query: SupportSQLiteQuery): Boolean?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addBirthday(vararg birthday: BirthdayEntity)
@@ -32,4 +36,7 @@ interface BirthdayEntityDao {
 
     @Query("SELECT * FROM birthdays WHERE contactId = :id")
     suspend fun getPersonProfile(id: Int): BirthdayEntity
+
+    @Query("SELECT * FROM birthdays ORDER BY birthdate ASC LIMIT 1")
+    suspend fun getUpcomingBirthday() : BirthdayEntity?
 }

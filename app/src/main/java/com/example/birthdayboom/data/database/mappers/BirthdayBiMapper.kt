@@ -13,7 +13,7 @@ class BirthdayBiMapper @Inject constructor(): BiMapper<BirthdayEntity, UIBirthda
         mobileNumber = source.mobileNumber,
         birthdate = source.birthdate,
         reminderTime = source.reminderTime,
-        note = source.note
+        note = source.note ?: "Happy Birthday"
         )
     }
 

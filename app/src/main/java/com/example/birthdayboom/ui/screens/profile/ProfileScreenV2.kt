@@ -66,7 +66,7 @@ fun ProfileScreenV2(
             }
             Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
                 NameCard(name = data.name)
-                DetailField(label = "BIRTHDATE", value = data.birthdate)
+                DetailField(label = "BIRTHDATE", value = data.birthdateString)
                 DetailField(label = "AGE", value = "$age Years Old")
                 DetailField(label = "PHONE NUMBER", value = data.mobileNumber)
             }

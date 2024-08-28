@@ -13,9 +13,9 @@ data class BirthdayEntity(
     @ColumnInfo(name = "mobile_no")
     val mobileNumber: String,
     @ColumnInfo(name = "birthdate")
-    val birthdate: String,
+    val birthdate: Long,
     @ColumnInfo(name = "reminder_time")
     val reminderTime: String,
     @ColumnInfo(name = "note")
-    val note: String
+    val note: String?
 )

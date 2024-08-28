@@ -8,6 +8,7 @@ import com.example.birthdayboom.data.database.models.UIBirthdayData
 import com.example.birthdayboom.data.utils.rotateMonthsByCurrentMonth
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.Calendar
 import javax.inject.Inject
 
 class BirthdayRepositoryImpl @Inject constructor(
@@ -16,7 +17,7 @@ class BirthdayRepositoryImpl @Inject constructor(
 ) : BirthdayRepository {
 
     override suspend fun addBirthday(
-        name: String, mobileNumber: String, birthdate: String,
+        name: String, mobileNumber: String, birthdate: Long,
         reminderTime: String, note: String
     ) {
         birthdayEntityDao.addBirthday(
@@ -25,7 +26,7 @@ class BirthdayRepositoryImpl @Inject constructor(
                     contactId = null,
                     name = name,
                     mobileNumber = mobileNumber,
-                    birthdate = birthdate,
+                    birthdateMillis = birthdate,
                     reminderTime = reminderTime,
                     note = note
                 )
@@ -45,14 +46,18 @@ class BirthdayRepositoryImpl @Inject constructor(
             "MAY", "JUNE", "JULY", "AUGUST",
             "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
         )
+        val calendar = Calendar.getInstance()
         return birthdayEntityDao.fetchAllBirthdays().map { birthdayEntities ->
             birthdayEntities
                 .map { birthdayBiMapper.convert(it) }
-                .groupBy { it.birthdate.split("-")[1] }
+                .groupBy {
+                    calendar.timeInMillis = it.birthdateMillis
+                    calendar.get(Calendar.MONTH)
+                }
                 .map {
                     GroupedUIBirthdayData(
-                        monthName = months[it.key.toInt() - 1],
-                        monthNumber = it.key.toInt(),
+                        monthName = months[it.key],
+                        monthNumber = it.key,
                         birthdayList = it.value
                     )
                 }
@@ -88,5 +93,9 @@ class BirthdayRepositoryImpl @Inject constructor(
     override suspend fun getPersonProfile(contactId: Int): UIBirthdayData {
         return birthdayEntityDao.getPersonProfile(id = contactId)
             .let { birthdayBiMapper.convert(it) }
+    }
+
+    override suspend fun getUpcomingBirthdayToSchedule(): UIBirthdayData? {
+        return birthdayEntityDao.getUpcomingBirthday()?.let { birthdayBiMapper.convert(it) }
     }
 }

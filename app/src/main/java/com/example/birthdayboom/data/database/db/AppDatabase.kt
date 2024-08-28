@@ -8,7 +8,7 @@ import com.example.birthdayboom.data.database.dao.BirthdayEntityDao
 import com.example.birthdayboom.data.database.entity.BirthdayEntity
 
 
-@Database(entities = [BirthdayEntity::class], version = 1, exportSchema = true)
+@Database(entities = [BirthdayEntity::class], version = 3, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun birthdayEntityDao(): BirthdayEntityDao
 
@@ -22,7 +22,7 @@ abstract class AppDatabase : RoomDatabase() {
                         context.applicationContext,
                         AppDatabase::class.java,
                         "birthday.db"
-                    ).build()
+                    ).fallbackToDestructiveMigration().build()
                 }
             }
             return INSTANCE

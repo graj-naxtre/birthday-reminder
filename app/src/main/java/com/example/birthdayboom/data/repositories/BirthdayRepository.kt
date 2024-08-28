@@ -14,7 +14,7 @@ interface BirthdayRepository {
     fun fetchAllBirthdays() : Flow<List<GroupedUIBirthdayData>>
 
     suspend fun addBirthday(
-        name: String, mobileNumber: String, birthdate: String,
+        name: String, mobileNumber: String, birthdate: Long,
         reminderTime: String, note: String
     )
 
@@ -26,4 +26,6 @@ interface BirthdayRepository {
     )
 
     suspend fun getPersonProfile(contactId: Int): UIBirthdayData
+
+    suspend fun getUpcomingBirthdayToSchedule() : UIBirthdayData?
 }

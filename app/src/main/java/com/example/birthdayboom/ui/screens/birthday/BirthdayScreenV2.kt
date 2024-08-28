@@ -81,7 +81,8 @@ fun BirthdayScreenV2(viewModel: BirthdayViewModel = hiltViewModel()) {
                         Text(
                             text = "Upcoming Birthdays",
                             style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
                         )
                     }
                 }
@@ -98,7 +99,7 @@ fun BirthdayScreenV2(viewModel: BirthdayViewModel = hiltViewModel()) {
                     items(items = it.birthdayList) { birthday ->
                         ContactCard(
                             title = birthday.name,
-                            subtitle = birthday.birthdate,
+                            subtitle = birthday.birthdateString,
                             modifier = Modifier.border(
                                 width = 0.5.dp,
                                 color = Color.LightGray,

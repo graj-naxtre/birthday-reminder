@@ -8,6 +8,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalProvider
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -123,86 +125,92 @@ fun AddBirthdayScreenV2(
             )
         })
     }) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 100.dp)
-        ) {
-            item {
-                FormTextField(
-                    placeholder = "Contact Name",
-                    value = contactName,
-                    onChange = { contactName = it },
-                    readOnly = false,
-                    supportingTextCondition = { showSupportingText && contactName.isEmpty() }
-                )
-            }
-            item {
-                FormTextField(
-                    placeholder = "Date of Birth",
-                    value = dateOfBirth,
-                    onChange = {
-                        dateOfBirth = dateState.selectedDateMillis?.let { getFormattedDate(it) }
-                            ?: getFormattedDate()
-                    },
-                    readOnly = true,
-                    onClick = { showDateDialog = true }
-                )
-            }
+        Column (modifier = Modifier.fillMaxSize().padding(padding).background(Color.White)){
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 100.dp)
+            ) {
+                item {
+                    FormTextField(
+                        modifier = Modifier.fillMaxWidth(0.85f),
+                        placeholder = "Contact Name",
+                        value = contactName,
+                        onChange = { contactName = it },
+                        readOnly = false,
+                        supportingTextCondition = { showSupportingText && contactName.isEmpty() }
+                    )
+                }
+                item {
+                    FormTextField(
+                        modifier = Modifier.fillMaxWidth(0.85f),
+                        placeholder = "Date of Birth",
+                        value = dateOfBirth,
+                        onChange = {
+                            dateOfBirth = dateState.selectedDateMillis?.let { getFormattedDate(it) }
+                                ?: getFormattedDate()
+                        },
+                        readOnly = true,
+                        onClick = { showDateDialog = true }
+                    )
+                }
 
-            item {
-                FormTextField(
-                    placeholder = "Contact Number",
-                    value = contactNumber,
-                    onChange = { if (it.length <= 10) contactNumber = it },
-                    readOnly = false,
-                    supportingText = "Must be a 10 digit number",
-                    keyboardType = KeyboardType.Number,
-                    supportingTextCondition = { showSupportingText && contactNumber.length < 10 }
-                )
-            }
-            item {
-                FormTextField(
-                    placeholder = "Reminder Time",
-                    value = reminderTime,
-                    onChange = {},
-                    readOnly = true,
-                    onClick = { showTimeDialog = true }
-                )
-            }
-            item {
-                FormTextField(
-                    placeholder = "Wish Note",
-                    value = wishNote,
-                    onChange = { wishNote = it },
-                    readOnly = false,
-                    minLines = 4,
-                    supportingTextCondition = { showSupportingText && wishNote.isEmpty() }
-                )
-            }
-            item {
-                Button(
-                    onClick = {
-                        showSupportingText = true
-                        if (contactName.isNotEmpty() && contactNumber.length == 10 && wishNote.isNotEmpty()) {
-                            viewModel.addContact(
-                                name = contactName,
-                                mobileNumber = contactNumber,
-                                birthdate = dateOfBirth,
-                                reminderTime = reminderTime,
-                                note = wishNote
-                            )
-                            handleNavigationAction(ContactNavigationEvent.OnSaveContactClick)
-                        }
-                    },
-                    shape = MaterialTheme.shapes.medium,
-                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.blue)),
-                    modifier = Modifier.fillMaxWidth(0.85f)
-                ) {
-                    Text(text = "SAVE")
+                item {
+                    FormTextField(
+                        modifier = Modifier.fillMaxWidth(0.85f),
+                        placeholder = "Contact Number",
+                        value = contactNumber,
+                        onChange = { if (it.length <= 10) contactNumber = it },
+                        readOnly = false,
+                        supportingText = "Must be a 10 digit number",
+                        keyboardType = KeyboardType.Number,
+                        supportingTextCondition = { showSupportingText && contactNumber.length < 10 }
+                    )
+                }
+                item {
+                    FormTextField(
+                        modifier = Modifier.fillMaxWidth(0.85f),
+                        placeholder = "Reminder Time",
+                        value = reminderTime,
+                        onChange = {},
+                        readOnly = true,
+                        onClick = { showTimeDialog = true }
+                    )
+                }
+                item {
+                    FormTextField(
+                        modifier = Modifier.fillMaxWidth(0.85f),
+                        placeholder = "Wish Note",
+                        value = wishNote,
+                        onChange = { wishNote = it },
+                        readOnly = false,
+                        minLines = 4,
+                        supportingTextCondition = { showSupportingText && wishNote.isEmpty() }
+                    )
+                }
+                item {
+                    Button(
+                        onClick = {
+                            showSupportingText = true
+                            if (contactName.isNotEmpty() && contactNumber.length == 10 && wishNote.isNotEmpty()) {
+                                viewModel.addContact(
+                                    name = contactName,
+                                    mobileNumber = contactNumber,
+                                    birthdate = dateOfBirth,
+                                    reminderTime = reminderTime,
+                                    note = wishNote
+                                )
+                                handleNavigationAction(ContactNavigationEvent.OnSaveContactClick)
+                            }
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.blue)),
+                        modifier = Modifier.fillMaxWidth(0.85f)
+                    ) {
+                        Text(text = "SAVE", color = Color.White)
+                    }
                 }
             }
         }

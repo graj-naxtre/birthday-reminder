@@ -74,7 +74,7 @@ fun ContactScreenV2(
             ModalDrawerSheet {
                 ProfileScreenV2(
                     data = drawerData.value,
-                    age = drawerData.value.birthdate,
+                    age = drawerData.value.birthdateString,
                     onClose = { scope.launch { drawerState.close() } }
                 )
             }
@@ -115,7 +115,7 @@ fun ContactScreenV2(
                     items(items = contacts) {
                         ContactCard(
                             title = it.name,
-                            subtitle = it.birthdate,
+                            subtitle = it.birthdateString,
                             cardClick = {
                                 drawerData.value = it
                                 scope.launch { drawerState.open() }

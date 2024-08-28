@@ -1,6 +1,8 @@
 package com.example.birthdayboom.ui.screens.setting
 
 import android.app.Activity
+import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -21,7 +23,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,8 +40,11 @@ import com.example.birthdayboom.R
 @Composable
 fun SettingScreen(viewModel: SettingViewModel = hiltViewModel()) {
     val context = LocalContext.current
+    var selectedUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
 
-    val fileActivityLauncher = rememberLauncherForActivityResult(
+    val exportFileActivityLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
         onResult = {
             if (it.resultCode == Activity.RESULT_OK) {
@@ -46,17 +54,39 @@ fun SettingScreen(viewModel: SettingViewModel = hiltViewModel()) {
             }
         })
 
-    Scaffold(topBar = { SettingsHeader() }) {
-        Column(modifier = Modifier
-            .padding(it)
-            .fillMaxSize()
-            .background(Color.White)) {
-            SettingsItem(text = "Export Data") {
-                viewModel.exportData { intent ->
-                    fileActivityLauncher.launch(intent)
+    val importFileActivityLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = {
+            if(it.resultCode == Activity.RESULT_OK){
+                it.data?.data?.also { uri ->
+                    viewModel.extractFile(uri, context){fileName ->
+                        viewModel.processFile(fileName)
+                    }
                 }
             }
-            SettingsItem(text = "Import Data", onClick = {})
+        }
+    )
+
+    Scaffold(topBar = { SettingsHeader() }) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
+            SettingsItem(text = "Export Data") {
+                viewModel.exportData { intent ->
+                    exportFileActivityLauncher.launch(intent)
+                }
+            }
+            SettingsItem(text = "Import Data", onClick = {
+                viewModel.importData { intent ->
+                    importFileActivityLauncher.launch(intent)
+                }
+            })
+            selectedUri?.let {
+                Text(text = "$it")
+            }
         }
     }
 }
@@ -73,7 +103,8 @@ fun SettingsHeader() {
         Text(
             text = "Settings",
             style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
         )
     }
 }
@@ -95,17 +126,19 @@ fun SettingsItem(text: String, onClick: () -> Unit) {
             Icon(
                 imageVector = Icons.Outlined.DateRange,
                 contentDescription = null,
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier.size(30.dp),
+                tint = Color.Black
             )
         }
         Row(modifier = Modifier.weight(1f)) {
-            Text(text = text)
+            Text(text = text, color = Color.Black)
         }
         Row(modifier = Modifier.weight(0.2f)) {
             Icon(
                 imageVector = Icons.Outlined.KeyboardArrowRight,
                 contentDescription = null,
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier.size(30.dp),
+                tint = Color.Black
             )
         }
     }

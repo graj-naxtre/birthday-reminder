@@ -6,12 +6,15 @@ import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
+import androidx.sqlite.db.SimpleSQLiteQuery
 import com.example.birthdayboom.data.database.dao.BirthdayEntityDao
 import com.example.birthdayboom.data.database.db.AppDatabase
+import com.example.birthdayboom.utils.CSVReader
 import com.example.birthdayboom.utils.CSVWriter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileReader
 import java.io.FileWriter
 import javax.inject.Inject
 
@@ -85,7 +88,47 @@ class AppRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun importData() {
-        TODO("Not yet implemented")
+    override suspend fun importData(file: File) {
+        withContext(Dispatchers.IO) {
+            try {
+            val csvReader = CSVReader(FileReader(file))
+            var nextLine: Array<String>? = null
+            var count = 0
+            val columns = StringBuilder()
+                do {
+                    val values = StringBuilder()
+                    nextLine = csvReader.readNext()
+                    nextLine?.let { dataArray ->
+                        for (i in 0 until dataArray.size - 1) {
+                            if (count == 0) {
+                                if (i == nextLine.size - 2) {
+                                    columns.append(nextLine[i])
+                                    count = 1
+                                } else {
+                                    columns.append(nextLine[i]).append(",")
+                                }
+                            } else {
+                                if (i == nextLine.size - 2) {
+                                    values.append("'").append(nextLine[i]).append("'")
+                                    count = 2
+                                } else {
+                                    values.append("'").append(nextLine[i]).append("',")
+                                }
+                            }
+                        }
+                        if(count == 2){
+                            insertData(columns, values)
+                        }
+                    }
+                } while (nextLine != null)
+            } catch (e: Exception){
+                Log.e("AppRepositoryImpl","message: ${e.localizedMessage}", e)
+            }
+        }
+    }
+
+    private fun insertData(columns: StringBuilder, values: StringBuilder) : Boolean? {
+        val query = SimpleSQLiteQuery("INSERT INTO birthdays ($columns) values($values)", arrayOf())
+        return birthdayEntityDao.insertDataRawFormat(query)
     }
 }

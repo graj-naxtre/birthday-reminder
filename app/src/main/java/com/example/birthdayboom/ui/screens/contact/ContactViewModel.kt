@@ -1,6 +1,5 @@
 package com.example.birthdayboom.ui.screens.contact
 
-import android.os.Build
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.birthdayboom.data.database.models.UIBirthdayData
 import com.example.birthdayboom.data.repositories.BirthdayRepository
-import com.example.birthdayboom.ui.screens.contact.utils.convertDate
+import com.example.birthdayboom.ui.screens.contact.utils.DateUtils
 import com.example.birthdayboom.utils.NotificationHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -33,25 +32,22 @@ class ContactViewModel @Inject constructor(
 
     fun notifyUser(name: String) {
         viewModelScope.launch {
-            notificationHelper.notifyTheUser(name)
+            notificationHelper.notifyTheUser(name, 0)
         }
     }
 
     // TODO: have to sort by names
     fun fetchAllContacts() {
         viewModelScope.launch(Dispatchers.IO) {
+            val dateUtils = DateUtils()
             birthdayRepository.fetchAllContacts().collect {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    it.map { uiBirthdayData ->
-                        uiBirthdayData.copy(
-                            birthdate = convertDate(
-                                uiBirthdayData.birthdate
-                            )
-                        )
-                    }.also { value ->
-                        _allBirthdayContacts.value = value
-                        lastSearchResult.value = value
-                    }
+                it.map { uiBirthdayData ->
+                    uiBirthdayData.copy(
+                        birthdateString = dateUtils.convertDate(uiBirthdayData.birthdateMillis)
+                    )
+                }.also { value ->
+                    _allBirthdayContacts.value = value
+                    lastSearchResult.value = value
                 }
             }
         }

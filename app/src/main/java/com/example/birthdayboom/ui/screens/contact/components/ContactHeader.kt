@@ -35,7 +35,8 @@ fun ContactHeader(searchField: String, onChange: (String) -> Unit) {
             Text(
                 text = "Contacts",
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
             )
             TextField(
                 value = searchField,

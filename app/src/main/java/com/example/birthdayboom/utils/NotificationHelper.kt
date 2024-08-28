@@ -14,7 +14,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.example.birthdayboom.R
 import com.example.birthdayboom.ui.activities.MainActivity
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class NotificationHelper @Inject constructor(
@@ -26,13 +25,13 @@ class NotificationHelper @Inject constructor(
         createNotificationChannel()
     }
 
-    private fun buildNotification(title: String): Notification {
+    private fun buildNotification(personName: String): Notification {
         val intent = Intent(context, MainActivity::class.java)
         val pendingIntent =
             PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
         return NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentTitle("It's $title Birthday !!!")
+            .setContentTitle("It's $personName Birthday !!!")
             .setContentText("Let's go and wish them...")
             .setSmallIcon(R.drawable.filled_cake_24)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -62,14 +61,14 @@ class NotificationHelper @Inject constructor(
         }
     }
 
-    fun notifyTheUser(title: String) {
+    fun notifyTheUser(personName: String, notificationId: Int) {
         if(!checkPermission()){ // if not granted then return
             Toast.makeText(context, "Permission required", Toast.LENGTH_SHORT).show()
             return
         }
         try {
             val nManager = NotificationManagerCompat.from(context)
-            nManager.notify(1, buildNotification(title))
+            nManager.notify(notificationId, buildNotification(personName))
         } catch (e: SecurityException) {
             Toast.makeText(context, "notification failure", Toast.LENGTH_SHORT).show()
         }

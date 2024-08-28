@@ -57,7 +57,7 @@ fun NotifyMeDialog(onDismiss: () -> Unit, onConfirm: () -> Unit, data: UIBirthda
                     )
                     FormTextField(
                         placeholder = "Note",
-                        value = data.note,
+                        value = data.note ?: "No note",
                         onChange = {},
                         readOnly = true,
                         minLines = 3

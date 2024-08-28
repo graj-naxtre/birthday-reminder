@@ -62,7 +62,7 @@ fun FormTextField(
         value = value,
         onValueChange = { onChange(it) },
         readOnly = readOnly,
-        placeholder = { Text(text = placeholder) },
+        placeholder = { Text(text = placeholder, color = Color.DarkGray) },
         shape = MaterialTheme.shapes.medium,
         colors = TextFieldDefaults.colors(
             focusedContainerColor = containerColor,
@@ -70,6 +70,8 @@ fun FormTextField(
             disabledContainerColor = containerColor,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
+            focusedTextColor = colorResource(id = R.color.blue),
+            unfocusedTextColor = Color.Black 
         ),
         supportingText = {
             if (supportingTextCondition()) Text(
@@ -77,10 +79,9 @@ fun FormTextField(
                 color = MaterialTheme.colorScheme.error
             )
         },
-        label = { Text(text = placeholder) },
+        label = { Text(text = placeholder, color = Color.Black) },
         minLines = minLines,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         interactionSource = interactionSource
     )
-
 }
