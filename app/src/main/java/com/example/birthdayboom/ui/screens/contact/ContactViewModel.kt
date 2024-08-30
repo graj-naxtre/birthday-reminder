@@ -19,7 +19,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ContactViewModel @Inject constructor(
     private val birthdayRepository: BirthdayRepository,
-    private val notificationHelper: NotificationHelper
 ) : ViewModel() {
 
     private val _allBirthdayContacts = MutableStateFlow<List<UIBirthdayData>>(emptyList())
@@ -29,12 +28,6 @@ class ContactViewModel @Inject constructor(
 
     private val _personProfileDetails: MutableState<UIBirthdayData?> = mutableStateOf(null)
     val personProfileDetails by _personProfileDetails
-
-    fun notifyUser(name: String) {
-        viewModelScope.launch {
-            notificationHelper.notifyTheUser(name, 0)
-        }
-    }
 
     // TODO: have to sort by names
     fun fetchAllContacts() {

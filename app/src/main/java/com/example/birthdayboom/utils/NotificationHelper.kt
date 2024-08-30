@@ -16,7 +16,7 @@ import com.example.birthdayboom.R
 import com.example.birthdayboom.ui.activities.MainActivity
 import javax.inject.Inject
 
-class NotificationHelper @Inject constructor(
+class NotificationHelper(
     private val context: Context,
 ) {
     private val CHANNEL_ID = "birthday_reminder"

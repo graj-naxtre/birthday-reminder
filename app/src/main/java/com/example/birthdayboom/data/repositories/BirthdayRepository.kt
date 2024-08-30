@@ -11,6 +11,8 @@ interface BirthdayRepository {
 
     fun fetchAllContacts(): Flow<List<UIBirthdayData>>
 
+    fun getListOfContacts() : List<UIBirthdayData>
+
     fun fetchAllBirthdays() : Flow<List<GroupedUIBirthdayData>>
 
     suspend fun addBirthday(

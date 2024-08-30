@@ -45,7 +45,7 @@ fun NotifyMeDialog(onDismiss: () -> Unit, onConfirm: () -> Unit, data: UIBirthda
                 ) {
                     FormTextField(
                         placeholder = "Date",
-                        value = data.birthdate,
+                        value = data.birthdateString,
                         onChange = {},
                         readOnly = true
                     )

@@ -110,7 +110,7 @@ fun ContactScreenV2(
                     item {
                         ContactCard(
                             cardClick = { scope.launch { drawerState.open() } },
-                            notificationClick = { viewModel.notifyUser("Satya Raj") })
+                            notificationClick = {  })
                     }
                     items(items = contacts) {
                         ContactCard(

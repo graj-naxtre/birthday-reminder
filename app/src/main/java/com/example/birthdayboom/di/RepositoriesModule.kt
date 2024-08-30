@@ -8,9 +8,6 @@ import com.example.birthdayboom.data.repositories.AppRepository
 import com.example.birthdayboom.data.repositories.AppRepositoryImpl
 import com.example.birthdayboom.data.repositories.BirthdayRepository
 import com.example.birthdayboom.data.repositories.BirthdayRepositoryImpl
-import com.example.birthdayboom.utils.NotificationHelper
-import com.example.birthdayboom.workmanager.ReminderManager
-import com.example.birthdayboom.workmanager.ReminderManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,21 +39,4 @@ object RepositoriesModule {
         db: AppDatabase
     ): AppRepository =
         AppRepositoryImpl(context = context, birthdayEntityDao = birthdayEntityDao, db = db)
-
-    @Provides
-    @Singleton
-    fun providesNotificationHelper(@ApplicationContext context: Context): NotificationHelper {
-        return NotificationHelper(context)
-    }
-
-    @Provides
-    @Singleton
-    fun providesReminderManager(
-        @ApplicationContext context: Context,
-        birthdayRepository: BirthdayRepository
-    ): ReminderManager {
-        return ReminderManagerImpl(context, birthdayRepository)
-    }
-
-
 }

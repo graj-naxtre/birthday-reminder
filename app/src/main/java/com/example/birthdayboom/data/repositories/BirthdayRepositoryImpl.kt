@@ -40,6 +40,12 @@ class BirthdayRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getListOfContacts(): List<UIBirthdayData> {
+        return birthdayEntityDao.getAllContacts().map { birthdayEntity ->
+            birthdayBiMapper.convert(birthdayEntity)
+        }
+    }
+
     override fun fetchAllBirthdays(): Flow<List<GroupedUIBirthdayData>> {
         val months = listOf(
             "JANUARY", "FEBRUARY", "MARCH", "APRIL",

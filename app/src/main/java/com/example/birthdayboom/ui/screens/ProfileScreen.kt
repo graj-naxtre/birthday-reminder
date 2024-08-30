@@ -38,7 +38,7 @@ fun ProfileScreen(contactId: Int, viewModel: ContactViewModel = hiltViewModel())
             )
             CustomTextField(
                 label = "Birthdate",
-                value = "${viewModel.personProfileDetails?.birthdate}",
+                value = "${viewModel.personProfileDetails?.birthdateString}",
                 onChange = {},
                 maxLines = 1,
                 enabled = false,

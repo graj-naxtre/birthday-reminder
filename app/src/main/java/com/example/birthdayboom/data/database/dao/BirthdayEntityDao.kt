@@ -21,6 +21,9 @@ interface BirthdayEntityDao {
     @Query("SELECT * FROM birthdays")
     fun fetchAllBirthdays(): Flow<List<BirthdayEntity>>
 
+    @Query("SELECT * FROM birthdays")
+    fun getAllContacts(): List<BirthdayEntity>
+
     @Query("SELECT * FROM birthdays WHERE SUBSTR(birthdate, 1, 5) = :date")
     suspend fun checkTodayBirthday(date: String): List<BirthdayEntity>
 
