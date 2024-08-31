@@ -22,8 +22,8 @@ import kotlin.coroutines.cancellation.CancellationException
 
 @HiltWorker
 class ReminderWorkManager @AssistedInject constructor(
-    @Assisted  context: Context,
-    @Assisted  workerParams: WorkerParameters,
+     context: Context,
+     workerParams: WorkerParameters,
     private val birthdayRepository: BirthdayRepository,
     private val sharedPreferences: SharedPreferences
 ) : CoroutineWorker(context, workerParams) {
