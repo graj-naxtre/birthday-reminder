@@ -9,11 +9,9 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.await
 import com.example.birthdayboom.utils.NotificationHelper
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
 
 class NotificationReceiver : BroadcastReceiver() {
     private val constraints = Constraints.Builder()
