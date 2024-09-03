@@ -90,9 +90,6 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
     implementation("com.google.code.gson:gson:2.10.1")
 
-    //forms
-    implementation("com.github.benjamin-luescher:compose-form:0.2.8")
-
     //snapshot
     implementation("androidx.compose.runtime:runtime:1.6.8")
 

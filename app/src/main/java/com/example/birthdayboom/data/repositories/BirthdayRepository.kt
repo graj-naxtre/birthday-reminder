@@ -1,19 +1,16 @@
 package com.example.birthdayboom.data.repositories
 
-import ch.benlu.composeform.FieldState
 import com.example.birthdayboom.data.database.models.GroupedUIBirthdayData
 import com.example.birthdayboom.data.database.models.UIBirthdayData
 import kotlinx.coroutines.flow.Flow
-import java.sql.Time
-import java.util.Date
 
 interface BirthdayRepository {
 
     fun fetchAllContacts(): Flow<List<UIBirthdayData>>
 
-    fun getListOfContacts() : List<UIBirthdayData>
+    fun getListOfContacts(): List<UIBirthdayData>
 
-    fun fetchAllBirthdays() : Flow<List<GroupedUIBirthdayData>>
+    suspend fun  fetchAllBirthdays(): Flow<List<GroupedUIBirthdayData>>
 
     suspend fun addBirthday(
         name: String, mobileNumber: String, birthdate: Long,
@@ -29,5 +26,5 @@ interface BirthdayRepository {
 
     suspend fun getPersonProfile(contactId: Int): UIBirthdayData
 
-    suspend fun getUpcomingBirthdayToSchedule() : UIBirthdayData?
+    suspend fun getUpcomingBirthdayToSchedule(): UIBirthdayData?
 }

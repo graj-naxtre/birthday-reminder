@@ -12,6 +12,8 @@ fun getTodayDate(): String {
     return dateFormatter.format(Date())
 }
 
+
+
 fun getMillisToDate(selectedDateMillis: Long?): String {
     val dateFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
     val calendar = Calendar.getInstance()
@@ -24,4 +26,17 @@ fun getMillisToDate(selectedDateMillis: Long?): String {
 fun delayInSeconds(date: String, hour: String, minute: String): Long {
     val todayDateTime = Calendar.getInstance()
     return todayDateTime.timeInMillis / 1000L
+}
+
+fun extractInitials(name: String): String {
+    var initials = ""
+    name.trim().split(" ").forEach { word ->
+        initials += word[0]
+    }
+
+    if(initials.isEmpty()){
+        initials = "${name[0]}"
+    }
+    
+    return initials
 }

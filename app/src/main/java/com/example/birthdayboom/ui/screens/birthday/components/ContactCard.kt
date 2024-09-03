@@ -33,6 +33,7 @@ import com.example.birthdayboom.R
 @Composable
 fun ContactCard(
     modifier: Modifier = Modifier,
+    initials: String = "S.R",
     title: String = "Satya Raj",
     subtitle: String = "Feb. 29 in 41 days",
     cardClick: () -> Unit = {},
@@ -61,7 +62,7 @@ fun ContactCard(
             )
         ) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Text(text = "S.R")
+                Text(text = initials)
             }
         }
 

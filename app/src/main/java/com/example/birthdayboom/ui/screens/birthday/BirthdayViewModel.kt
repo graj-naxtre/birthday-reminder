@@ -81,7 +81,7 @@ class BirthdayViewModel @Inject constructor(
         communicationUtil.sendTextMessage(message = "Happy Birthday", phoneNumber)
     }
 
-    fun sendWhatsappMessage(message: String, phoneNumber: String){
+    fun sendWhatsappMessage(message: String, phoneNumber: String) {
         communicationUtil.sendWhatsappMessage(message, phoneNumber)
     }
 }

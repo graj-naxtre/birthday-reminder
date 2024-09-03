@@ -43,10 +43,10 @@ fun ProfileScreenV2(
     ) {
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             IconButton(onClick = { onClose() }) {
-                Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
+                Icon(imageVector = Icons.Outlined.Close, tint = Color.Black, contentDescription = null)
             }
             IconButton(onClick = { /*TODO*/ }) {
-                Icon(imageVector = Icons.Outlined.Create, contentDescription = null)
+                Icon(imageVector = Icons.Outlined.Create, tint = Color.Black, contentDescription = null)
             }
         }
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -65,9 +65,9 @@ fun ProfileScreenV2(
                 }
             }
             Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                NameCard(name = data.name)
-                DetailField(label = "BIRTHDATE", value = data.birthdateString)
-                DetailField(label = "AGE", value = "$age Years Old")
+                NameCard(name = data.name, birthdayDetails = data.birthdateString)
+                DetailField(label = "BIRTHDATE", value = data.birthdate)
+                DetailField(label = "AGE", value = "${data.age} Years Old")
                 DetailField(label = "PHONE NUMBER", value = data.mobileNumber)
             }
         }

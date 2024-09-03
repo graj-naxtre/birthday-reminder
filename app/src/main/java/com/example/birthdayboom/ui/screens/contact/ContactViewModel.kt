@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.birthdayboom.data.database.models.UIBirthdayData
 import com.example.birthdayboom.data.repositories.BirthdayRepository
 import com.example.birthdayboom.ui.screens.contact.utils.DateUtils
-import com.example.birthdayboom.utils.NotificationHelper
+import com.example.birthdayboom.utils.extractInitials
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,8 +35,12 @@ class ContactViewModel @Inject constructor(
             val dateUtils = DateUtils()
             birthdayRepository.fetchAllContacts().collect {
                 it.map { uiBirthdayData ->
+                    val (birthdate, age) = dateUtils.convertMillisToDate(uiBirthdayData.birthdateMillis)
                     uiBirthdayData.copy(
-                        birthdateString = dateUtils.convertDate(uiBirthdayData.birthdateMillis)
+                        birthdateString = dateUtils.convertDate(uiBirthdayData.birthdateMillis),
+                        birthdate = birthdate,
+                        age = age,
+                        initialLetters = extractInitials(uiBirthdayData.name)
                     )
                 }.also { value ->
                     _allBirthdayContacts.value = value

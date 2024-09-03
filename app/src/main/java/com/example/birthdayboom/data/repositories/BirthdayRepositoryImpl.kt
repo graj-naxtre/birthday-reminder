@@ -6,6 +6,7 @@ import com.example.birthdayboom.data.database.mappers.BirthdayBiMapper
 import com.example.birthdayboom.data.database.models.GroupedUIBirthdayData
 import com.example.birthdayboom.data.database.models.UIBirthdayData
 import com.example.birthdayboom.data.utils.rotateMonthsByCurrentMonth
+import com.example.birthdayboom.ui.screens.contact.utils.DateUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.Calendar
@@ -46,16 +47,23 @@ class BirthdayRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun fetchAllBirthdays(): Flow<List<GroupedUIBirthdayData>> {
+    override suspend fun fetchAllBirthdays(): Flow<List<GroupedUIBirthdayData>> {
         val months = listOf(
             "JANUARY", "FEBRUARY", "MARCH", "APRIL",
             "MAY", "JUNE", "JULY", "AUGUST",
             "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
         )
         val calendar = Calendar.getInstance()
+        val dateUtils = DateUtils()
         return birthdayEntityDao.fetchAllBirthdays().map { birthdayEntities ->
             birthdayEntities
+                .asSequence()
                 .map { birthdayBiMapper.convert(it) }
+                .map { uiBirthdayData ->
+                    uiBirthdayData.copy(
+                        birthdateString = dateUtils.convertDate(uiBirthdayData.birthdateMillis)
+                    )
+                }
                 .groupBy {
                     calendar.timeInMillis = it.birthdateMillis
                     calendar.get(Calendar.MONTH)
@@ -68,6 +76,7 @@ class BirthdayRepositoryImpl @Inject constructor(
                     )
                 }
                 .sortedBy { it.monthNumber }
+                .toList()
                 .let { rotateMonthsByCurrentMonth(it) }
         }
     }
@@ -87,12 +96,12 @@ class BirthdayRepositoryImpl @Inject constructor(
         note: String
     ) {
         birthdayEntityDao.updateBirthdayNote(
-            id,
-            name,
-            mobileNumber,
-            birthdate,
-            reminderTime,
-            note
+            id = id,
+            name = name,
+            mobileNumber = mobileNumber,
+            birthdate = birthdate,
+            reminderTime = reminderTime,
+            note = note
         )
     }
 

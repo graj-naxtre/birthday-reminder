@@ -67,8 +67,10 @@ fun ContactScreenV2(
             viewModel.showAllContacts()
         }
     }
+
 // Calendar.getInstance().get(Calendar.YEAR) - drawerData.value.birthdate.split("-")[2].toInt()
     ModalNavigationDrawer(
+        scrimColor = Color.Transparent,
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
@@ -107,13 +109,9 @@ fun ContactScreenV2(
                     .padding(horizontal = 16.dp)
             ) {
                 LazyColumn(contentPadding = PaddingValues(bottom = 100.dp)) {
-                    item {
-                        ContactCard(
-                            cardClick = { scope.launch { drawerState.open() } },
-                            notificationClick = {  })
-                    }
                     items(items = contacts) {
                         ContactCard(
+                            initials = it.initialLetters,
                             title = it.name,
                             subtitle = it.birthdateString,
                             cardClick = {

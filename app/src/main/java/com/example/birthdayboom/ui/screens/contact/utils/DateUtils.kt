@@ -3,7 +3,6 @@ package com.example.birthdayboom.ui.screens.contact.utils
 import com.example.birthdayboom.data.database.models.UIBirthdayData
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
@@ -13,31 +12,33 @@ class DateUtils {
     private val dateFormatter = SimpleDateFormat("MMM. dd", Locale.getDefault())
 
     init {
-        currentCalendar.setTimeInMillis(System.currentTimeMillis())
+        currentCalendar.set(Calendar.HOUR_OF_DAY, 0)
+        currentCalendar.set(Calendar.MINUTE, 0)
+        currentCalendar.set(Calendar.SECOND, 0)
     }
 
-    suspend fun convertDate(timeInMillis: Long): String {
+    fun convertDate(timeInMillis: Long): String {
 
         birthdayCalendar.setTimeInMillis(timeInMillis)
 
-        val differenceInMillis: Long
-        val daysDifference: Int
-        val formattedDate: String
-        if (birthdayCalendar.get(Calendar.DAY_OF_YEAR) >= currentCalendar.get(Calendar.DAY_OF_YEAR)) {
-            birthdayCalendar.set(Calendar.YEAR, currentCalendar.get(Calendar.YEAR))
-            differenceInMillis = birthdayCalendar.timeInMillis - currentCalendar.timeInMillis
-            formattedDate = dateFormatter.format(birthdayCalendar.timeInMillis)
-            daysDifference = TimeUnit.MILLISECONDS.toDays(differenceInMillis).toInt()
-        } else {
-            birthdayCalendar.set(Calendar.YEAR, currentCalendar.get(Calendar.YEAR) + 1)
-            differenceInMillis = birthdayCalendar.timeInMillis - currentCalendar.timeInMillis
-            formattedDate = dateFormatter.format(birthdayCalendar.timeInMillis)
-            daysDifference = TimeUnit.MILLISECONDS.toDays(differenceInMillis).toInt()
-        }
+        val differenceInMillis: Long =
+            if (birthdayCalendar.get(Calendar.DAY_OF_YEAR) >= currentCalendar.get(Calendar.DAY_OF_YEAR)) {
+                // upcoming birthday
+                birthdayCalendar.set(Calendar.YEAR, currentCalendar.get(Calendar.YEAR))
+                birthdayCalendar.timeInMillis - currentCalendar.timeInMillis
+            } else {
+                // birthday passed
+                birthdayCalendar.set(Calendar.YEAR, currentCalendar.get(Calendar.YEAR) + 1)
+                birthdayCalendar.timeInMillis - currentCalendar.timeInMillis
+            }
+
+        val formattedDate: String = dateFormatter.format(birthdayCalendar.timeInMillis)
+        val daysDifference: Int = TimeUnit.MILLISECONDS.toDays(differenceInMillis).toInt()
+
         return if (daysDifference > 0) {
-            "$formattedDate is Today"
-        } else {
             "$formattedDate in $daysDifference days"
+        } else {
+            "$formattedDate is Today"
         }
     }
 
@@ -56,5 +57,18 @@ class DateUtils {
             }
             .filter { it.birthdateMillis > currentTimeInMillis } // Keep only future events
             .minByOrNull { it.birthdateMillis } // Find the closest future event
+    }
+
+    fun convertMillisToDate(dateInMillis: Long): Pair<String, Int> {
+        birthdayCalendar.timeInMillis = dateInMillis
+        val birthdate = SimpleDateFormat(
+            "dd-MM-yyyy",
+            Locale.getDefault()
+        ).format(birthdayCalendar.timeInMillis)
+
+        val age =
+            ((TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis()) - TimeUnit.MILLISECONDS.toDays(dateInMillis)) / 365).toInt()
+
+        return Pair(birthdate, age)
     }
 }
