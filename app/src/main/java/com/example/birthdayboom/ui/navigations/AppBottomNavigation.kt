@@ -17,15 +17,18 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.birthdayboom.ui.state.LocalComponentDisplay
 
 @Composable
 fun AppBottomNavigation(
     navController: NavHostController,
     navigationItems: List<BottomNavigationDestinations>
 ) {
+    val componentState = LocalComponentDisplay.current
+
     BottomNavigation(
-        backgroundColor = Color.White,
-        contentColor = Color.Black,
+        backgroundColor = Color.Black,
+        contentColor = Color.White,
         modifier = Modifier
             .fillMaxWidth()
             .height(70.dp)
@@ -45,6 +48,11 @@ fun AppBottomNavigation(
                         }
                         restoreState = true
                         launchSingleTop = true
+                    }
+                    if(screen.route == "Contacts"){
+                        componentState.displayFloatingButton(value = true)
+                    } else {
+                        componentState.displayFloatingButton(value = false)
                     }
                 },
                 icon = {

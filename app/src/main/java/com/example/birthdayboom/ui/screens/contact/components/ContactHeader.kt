@@ -2,13 +2,18 @@ package com.example.birthdayboom.ui.screens.contact.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -59,5 +64,41 @@ fun ContactHeader(searchField: String, onChange: (String) -> Unit) {
                 )
             )
         }
+    }
+}
+
+@Composable
+fun ContactSearchHeader(value: String, onValueChange: (String) -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = Color.Black)
+            .padding(20.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            shape = CircleShape,
+            placeholder = { Text(text = "Search") },
+            colors = TextFieldDefaults.colors(
+                unfocusedIndicatorColor = Color.Transparent,
+                unfocusedContainerColor = Color.White
+            ),
+            trailingIcon = {
+                Box(
+                    modifier = Modifier
+                        .background(color = Color.Black, shape = CircleShape)
+                        .padding(5.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Search,
+                        contentDescription = "Search Icon",
+                        tint = Color.White
+                    )
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }

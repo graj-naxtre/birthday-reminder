@@ -9,7 +9,9 @@ import androidx.navigation.navigation
 import com.example.birthdayboom.ui.navigations.contactNavigation
 import com.example.birthdayboom.ui.screens.ProfileScreen
 import com.example.birthdayboom.ui.screens.add_birthday.AddBirthdayScreenV2
+import com.example.birthdayboom.ui.screens.contact.ContactScreen
 import com.example.birthdayboom.ui.screens.contact.ContactScreenV2
+import com.example.birthdayboom.ui.state.LocalComponentDisplay
 
 fun NavGraphBuilder.contactNavGraph(
     navController: NavHostController,
@@ -21,9 +23,7 @@ fun NavGraphBuilder.contactNavGraph(
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None }
         ) {
-            ContactScreenV2(handleNavigationAction = { event ->
-                handleContactNavigation(event, navController)
-            })
+            ContactScreen()
         }
 
         composable(

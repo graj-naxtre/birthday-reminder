@@ -9,6 +9,7 @@ import androidx.navigation.navigation
 import com.example.birthdayboom.ui.navigations.birthdayNavigation
 import com.example.birthdayboom.ui.screens.ProfileScreen
 import com.example.birthdayboom.ui.screens.birthday.BirthdayScreenV2
+import com.example.birthdayboom.ui.screens.home.HomeScreen
 
 fun NavGraphBuilder.birthdayNavGraph(
     navController: NavHostController,
@@ -21,9 +22,10 @@ fun NavGraphBuilder.birthdayNavGraph(
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None }
         ) {
-            BirthdayScreenV2(
+//            BirthdayScreenV2(
 //                handleNavigationAction = { event -> handleBirthdayNavigation(event, navController) }
-            )
+//            )
+            HomeScreen()
         }
 
         composable(
