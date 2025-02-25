@@ -2,12 +2,12 @@ package com.example.birthdayboom.ui.screens.setting
 
 import android.app.Activity
 import android.net.Uri
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,11 +16,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,11 +30,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.birthdayboom.R
 
 @Composable
 fun SettingScreen(viewModel: SettingViewModel = hiltViewModel()) {
@@ -57,9 +54,9 @@ fun SettingScreen(viewModel: SettingViewModel = hiltViewModel()) {
     val importFileActivityLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
         onResult = {
-            if(it.resultCode == Activity.RESULT_OK){
+            if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
-                    viewModel.extractFile(uri, context){fileName ->
+                    viewModel.extractFile(uri, context) { fileName ->
                         viewModel.processFile(fileName)
                     }
                 }
@@ -67,23 +64,32 @@ fun SettingScreen(viewModel: SettingViewModel = hiltViewModel()) {
         }
     )
 
-    Scaffold(topBar = { SettingsHeader() }) { paddingValues ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        SettingsHeader()
+
         Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .background(Color.White)
+            modifier = Modifier.padding(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            SettingsItem(text = "Export Data") {
-                viewModel.exportData { intent ->
-                    exportFileActivityLauncher.launch(intent)
+            SettingsItem(
+                text = "Export Data",
+                onClick = {
+                    viewModel.exportData { intent ->
+                        exportFileActivityLauncher.launch(intent)
+                    }
                 }
-            }
-            SettingsItem(text = "Import Data", onClick = {
-                viewModel.importData { intent ->
-                    importFileActivityLauncher.launch(intent)
+            )
+            SettingsItem(
+                text = "Import Data",
+                onClick = {
+                    viewModel.importData { intent ->
+                        importFileActivityLauncher.launch(intent)
+                    }
                 }
-            })
+            )
             selectedUri?.let {
                 Text(text = "$it")
             }
@@ -96,15 +102,15 @@ fun SettingsHeader() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(colorResource(id = R.color.light_blue))
+            .background(color = Color.Black)
             .statusBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 20.dp)
+            .padding(20.dp)
     ) {
         Text(
             text = "Settings",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = Color.Black
+            color = Color.White
         )
     }
 }
@@ -113,32 +119,33 @@ fun SettingsHeader() {
 fun SettingsItem(text: String, onClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier
             .fillMaxWidth()
             .then(remember {
                 Modifier.clickable { onClick() }
             })
-            .background(Color.White)
+            .background(
+                color = MaterialTheme.colorScheme.primaryContainer,
+                shape = MaterialTheme.shapes.large
+            )
             .padding(horizontal = 16.dp, vertical = 20.dp)
     ) {
-        Row(modifier = Modifier.weight(0.2f)) {
+        Box {
             Icon(
                 imageVector = Icons.Outlined.DateRange,
-                contentDescription = null,
+                contentDescription = "calendar",
                 modifier = Modifier.size(30.dp),
-                tint = Color.Black
             )
         }
-        Row(modifier = Modifier.weight(1f)) {
-            Text(text = text, color = Color.Black)
+        Box(modifier = Modifier.weight(1f)) {
+            Text(text = text)
         }
-        Row(modifier = Modifier.weight(0.2f)) {
+        Box {
             Icon(
-                imageVector = Icons.Outlined.KeyboardArrowRight,
-                contentDescription = null,
+                imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                contentDescription = "arrow",
                 modifier = Modifier.size(30.dp),
-                tint = Color.Black
             )
         }
     }

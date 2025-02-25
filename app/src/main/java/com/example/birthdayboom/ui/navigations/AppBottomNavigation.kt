@@ -49,11 +49,6 @@ fun AppBottomNavigation(
                         restoreState = true
                         launchSingleTop = true
                     }
-                    if(screen.route == "Contacts"){
-                        componentState.displayFloatingButton(value = true)
-                    } else {
-                        componentState.displayFloatingButton(value = false)
-                    }
                 },
                 icon = {
                     Icon(

@@ -1,11 +1,9 @@
 package com.example.birthdayboom.ui.activities
 
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -17,13 +15,13 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,7 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.core.content.ContextCompat
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.birthdayboom.ui.navigations.AppBottomNavigation
 import com.example.birthdayboom.ui.navigations.AppNavigation
@@ -39,25 +38,20 @@ import com.example.birthdayboom.ui.navigations.BottomNavigationDestinations
 import com.example.birthdayboom.ui.screens.contact.components.BottomSheetMenu
 import com.example.birthdayboom.ui.state.LocalComponentDisplay
 import com.example.birthdayboom.ui.theme.BirthdayBoomTheme
+import com.example.birthdayboom.utils.permission.PermissionManager
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val permissionManager by lazy { PermissionManager() }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
-            val permissionLauncher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.RequestPermission(),
-                onResult = { granted ->
-                    if (!granted) {
-                        Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
-                    }
-                })
-
+            val context = LocalContext.current
             val componentState = LocalComponentDisplay.current
 
-            var showBottomBar by remember { mutableStateOf(false) }
             val navController = rememberNavController()
             val bottomNavigationItems = remember {
                 listOf(
@@ -69,7 +63,26 @@ class MainActivity : ComponentActivity() {
 
             BirthdayBoomTheme {
                 // A surface container using the 'background' color from the theme
-                Box(modifier = Modifier.fillMaxSize()){
+                Box(modifier = Modifier.fillMaxSize()) {
+                    val permissionState = permissionManager.permissionState.collectAsState()
+                    val permissionLauncher = rememberLauncherForActivityResult(
+                        contract = ActivityResultContracts.RequestPermission(),
+                        onResult = { granted ->
+                            if (!granted) {
+                                Toast.makeText(
+                                    context,
+                                    "Permission is required in order to notify you",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        })
+
+                    LaunchedEffect(permissionState) {
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
+                            permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                        }
+                    }
+
                     Scaffold(
                         modifier = Modifier
                             .fillMaxSize(),
@@ -83,7 +96,8 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 FloatingActionButton(
                                     onClick = {},
-                                    shape = MaterialTheme.shapes.large
+                                    shape = MaterialTheme.shapes.large,
+                                    modifier = Modifier.padding(horizontal = 10.dp)
                                 ) {
                                     Text(text = "Add Contact")
                                 }
@@ -118,41 +132,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun checkPermission(): Boolean {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
-            return ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED
-        }
-        return true
-    }
-}
-
-@Composable
-fun BirthdayBoomApp() {
-    val navController = rememberNavController()
-    val bottomNavigationItems = remember {
-        listOf(
-            BottomNavigationDestinations.Birthdays,
-            BottomNavigationDestinations.Contacts,
-            BottomNavigationDestinations.Settings
-        )
-    }
-
-    Box {
-        AppNavigation(navController)
-        Box(
-            contentAlignment = Alignment.BottomCenter,
-            modifier = Modifier
-                .fillMaxSize()
-                .navigationBarsPadding()
-        ) {
-            AppBottomNavigation(
-                navController = navController,
-                navigationItems = bottomNavigationItems
-            )
-        }
+    override fun onResume() {
+        super.onResume()
+        permissionManager.isNotificationPermissionGranted(this)
     }
 }
 
