@@ -1,12 +1,11 @@
 package com.example.birthdayboom.utils
 
-import android.annotation.SuppressLint
 import android.icu.util.Calendar
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@SuppressLint("SimpleDateFormat")
+
 fun getTodayDate(): String {
     val dateFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
     return dateFormatter.format(Date())
