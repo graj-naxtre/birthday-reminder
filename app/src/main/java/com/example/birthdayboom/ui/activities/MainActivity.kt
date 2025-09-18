@@ -1,6 +1,5 @@
 package com.example.birthdayboom.ui.activities
 
-import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -9,40 +8,43 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
-import com.example.birthdayboom.ui.navigations.AppBottomNavigation
-import com.example.birthdayboom.ui.navigations.AppNavigation
-import com.example.birthdayboom.ui.navigations.BottomNavigationDestinations
-import com.example.birthdayboom.ui.navigations.navgraph.ContactScreens
-import com.example.birthdayboom.ui.screens.contact.components.BottomSheetMenu
-import com.example.birthdayboom.ui.state.LocalComponentDisplay
-import com.example.birthdayboom.ui.theme.BirthdayBoomTheme
-import com.example.birthdayboom.utils.permission.PermissionManager
+import com.example.birthdayboom.ui.components.FloatingAddContactButton
+import com.example.birthdayboom.ui.navigations.root.AppBottomBar
+import com.example.birthdayboom.ui.navigations.root.AppNavigation
+import com.example.birthdayboom.ui.navigations.root.PermissionChip
+import com.example.birthdayboom.ui.providers.LocalComponentDisplay
+import com.example.birthdayboom.ui.providers.LocalNavigationProvider
+import com.example.birthdayboom.ui.providers.LocalThemeProvider
+import com.example.birthdayboom.ui.providers.darkThemeColor
+import com.example.birthdayboom.ui.providers.lightThemeColor
+import com.example.birthdayboom.ui.components.BottomSheetMenu
+import com.example.birthdayboom.utils.permission.IPermissionDelegate
+import com.example.birthdayboom.utils.permission.PermissionDelegate
+import com.example.birthdayboom.utils.permission.PermissionState
+import com.example.birthdayboom.utils.toast_holder.ToastHolder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
-    private val permissionManager by lazy { PermissionManager() }
+class MainActivity : ComponentActivity(), IPermissionDelegate by PermissionDelegate() {
+
+    private var notificationPermissionState by mutableStateOf(PermissionState.GRANTED)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -51,69 +53,61 @@ class MainActivity : ComponentActivity() {
             val context = LocalContext.current
             val componentState = LocalComponentDisplay.current
 
+            val currentTheme = if (isSystemInDarkTheme()) darkThemeColor else lightThemeColor
             val navController = rememberNavController()
-            val bottomNavigationItems = remember {
-                listOf(
-                    BottomNavigationDestinations.Birthdays,
-                    BottomNavigationDestinations.Contacts,
-                    BottomNavigationDestinations.Settings
-                )
+
+            val permissionLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestPermission(),
+                onResult = { granted ->
+                    if (!granted) {
+                        Toast.makeText(
+                            context,
+                            "Permission is required in order to notify you",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            )
+
+            LaunchedEffect(ToastHolder.toastMessage) {
+                if (ToastHolder.toastMessage.isNotBlank()) {
+                    Toast.makeText(this@MainActivity, ToastHolder.toastMessage, Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
 
-            BirthdayBoomTheme {
-                // A surface container using the 'background' color from the theme
+            CompositionLocalProvider(
+                LocalNavigationProvider provides navController,
+                LocalThemeProvider provides currentTheme
+            ) {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    val permissionState = permissionManager.permissionState.collectAsState()
-                    val permissionLauncher = rememberLauncherForActivityResult(
-                        contract = ActivityResultContracts.RequestPermission(),
-                        onResult = { granted ->
-                            if (!granted) {
-                                Toast.makeText(
-                                    context,
-                                    "Permission is required in order to notify you",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        })
-
-                    LaunchedEffect(permissionState) {
-                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
-                            permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-                        }
-                    }
-
                     Scaffold(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        containerColor = Color.Black.copy(alpha = 0.8f),
-                        contentColor = Color.White,
+                        modifier = Modifier.fillMaxSize(),
+                        containerColor = currentTheme.backgroundColor,
+                        contentColor = currentTheme.textPrimaryColor,
                         floatingActionButton = {
-                            AnimatedVisibility(
-                                visible = componentState.showFloatingActionButton,
-                                enter = fadeIn(),
-                                exit = fadeOut()
-                            ) {
-                                FloatingActionButton(
-                                    onClick = {
-                                        navController.navigate(ContactScreens.AddContact.route)
-                                    },
-                                    shape = MaterialTheme.shapes.large,
-                                ) {
-                                    Row(modifier = Modifier.padding(horizontal = 10.dp)) {
-                                        Text(text = "Add Contact")
-                                    }
-                                }
-                            }
+                            FloatingAddContactButton()
                         },
                         bottomBar = {
                             AnimatedVisibility(
                                 visible = componentState.showBottomBar,
                                 enter = slideInVertically { it },
-                                exit = slideOutVertically { it }) {
-                                AppBottomNavigation(
-                                    navController = navController,
-                                    navigationItems = bottomNavigationItems
-                                )
+                                exit = slideOutVertically { it }
+                            ) {
+                                Column {
+                                    if (notificationPermissionState != PermissionState.GRANTED) {
+                                        PermissionChip(
+                                            onClick = {
+                                                if (notificationPermissionState == PermissionState.REDIRECT_SETTINGS) {
+                                                    redirectToSettings(this@MainActivity)
+                                                } else {
+                                                    permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                                                }
+                                            }
+                                        )
+                                    }
+                                    AppBottomBar()
+                                }
                             }
                         }
                     ) { paddingValues ->
@@ -136,7 +130,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        permissionManager.isNotificationPermissionGranted(this)
+        notificationPermissionState = isNotificationPermissionGranted(this)
     }
 }
 

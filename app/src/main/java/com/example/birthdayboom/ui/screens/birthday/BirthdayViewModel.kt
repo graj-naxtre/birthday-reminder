@@ -38,7 +38,7 @@ class BirthdayViewModel @Inject constructor(
     fun fetchAllBirthdays() {
         viewModelScope.launch(Dispatchers.IO) {
             birthdayRepository.fetchAllBirthdays().collect {
-                _allBirthdays.value = it
+//                _allBirthdays.value = it
             }
         }
     }

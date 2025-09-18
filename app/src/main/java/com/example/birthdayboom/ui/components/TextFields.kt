@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,18 +39,23 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.birthdayboom.ui.providers.LocalThemeProvider
 
 @Composable
 fun PrimaryTextField(
+    modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
     label: String = "label",
     placeholder: String = "Enter your $label",
     errorText: String = "$label is required field.",
+    readOnly: Boolean = false,
     maxLines: Int = 1,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     trailingIcon: @Composable (() -> Unit)? = null,
+    onFocusGained: (() -> Unit)? = null,
 ) {
+    val currentTheme = LocalThemeProvider.current
     var isError by remember { mutableStateOf(false) }
     var wasFocused by remember { mutableStateOf(false) }
 
@@ -63,29 +69,42 @@ fun PrimaryTextField(
         placeholder = { Text(text = placeholder) },
         supportingText = {
             if (isError) {
-                Text(text = errorText, color = Color.Red)
+                Text(text = errorText, color = currentTheme.errorColor)
             }
         },
         isError = isError,
+        readOnly = readOnly,
         colors = OutlinedTextFieldDefaults.colors(
-            unfocusedContainerColor = Color.White,
-            unfocusedBorderColor = Color.DarkGray,
-            focusedLabelColor = Color.Black,
-            focusedBorderColor = Color.Black,
-            focusedContainerColor = Color.White,
-            cursorColor = Color.Black,
-            errorCursorColor = Color.Black,
-            errorLabelColor = Color.Red,
-            errorContainerColor = Color.White,
-            errorBorderColor = Color.Red
+            unfocusedContainerColor = currentTheme.surfaceColor,
+            focusedContainerColor = currentTheme.surfaceColor,
+            errorContainerColor = currentTheme.surfaceColor,
+
+            unfocusedBorderColor = currentTheme.borderColor,
+            focusedBorderColor = currentTheme.primaryColor,
+            errorBorderColor = currentTheme.errorColor,
+
+            errorLabelColor = currentTheme.errorColor,
+            focusedLabelColor = currentTheme.primaryColor,
+
+            focusedTextColor = currentTheme.textPrimaryColor,
+            unfocusedTextColor = currentTheme.textPrimaryColor,
+
+            cursorColor = currentTheme.primaryColor,
+            errorCursorColor = currentTheme.errorColor,
         ),
         minLines = maxLines,
         visualTransformation = visualTransformation,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .onFocusChanged { focusState ->
                 when {
-                    focusState.isFocused -> wasFocused = true
+                    focusState.isFocused -> {
+                        wasFocused = true
+                        if(onFocusGained != null){
+                            onFocusGained()
+                        }
+                    }
+
                     !focusState.isFocused -> {
                         if (wasFocused && value.isEmpty()) isError = true
                     }

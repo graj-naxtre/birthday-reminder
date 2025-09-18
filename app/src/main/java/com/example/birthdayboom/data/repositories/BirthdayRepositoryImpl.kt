@@ -2,89 +2,80 @@ package com.example.birthdayboom.data.repositories
 
 import android.util.Log
 import com.example.birthdayboom.data.database.dao.BirthdayEntityDao
-import com.example.birthdayboom.data.database.mappers.BirthdayBiMapper
-import com.example.birthdayboom.data.database.models.GroupedUIBirthdayData
+import com.example.birthdayboom.data.database.entity.BirthdayEntity
 import com.example.birthdayboom.data.database.models.UIBirthdayData
-import com.example.birthdayboom.data.utils.rotateMonthsByCurrentMonth
-import com.example.birthdayboom.ui.screens.contact.utils.DateUtils
+import com.example.birthdayboom.ui.screens.contact.components.ContactCardInfo
+import com.example.birthdayboom.ui.screens.home.BirthdayCardInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.util.Calendar
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class BirthdayRepositoryImpl @Inject constructor(
-    private val birthdayEntityDao: BirthdayEntityDao,
-    private val birthdayBiMapper: BirthdayBiMapper
+    private val birthdayEntityDao: BirthdayEntityDao
 ) : BirthdayRepository {
 
     override suspend fun addBirthday(
-        name: String, mobileNumber: String, birthdate: Long,
-        reminderTime: String, note: String
-    ) {
-        birthdayEntityDao.addBirthday(
-            birthdayBiMapper.convert(
-                UIBirthdayData(
-                    contactId = null,
-                    name = name,
-                    mobileNumber = mobileNumber,
-                    birthdateMillis = birthdate,
-                    reminderTime = reminderTime,
-                    note = note
-                )
-            )
+        name: String,
+        mobileNumber: String,
+        birthdate: LocalDate,
+        note: String
+    ) = runCatching {
+
+        val entity = BirthdayEntity(
+            name = name,
+            mobileNumber = mobileNumber,
+            birthdate = birthdate,
+            birthdayMonth = birthdate.monthValue,
+            note = note,
         )
+
+        birthdayEntityDao.addBirthday(entity)
     }
 
-    override fun fetchAllContacts(): Flow<List<UIBirthdayData>> {
-        return birthdayEntityDao.fetchAllBirthdays().map { birthdayEntities ->
-            birthdayEntities.map { birthdayBiMapper.convert(it) }.sortedBy { it.name }
+    override fun fetchAllContacts(): Flow<List<ContactCardInfo>> {
+        val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+
+        return birthdayEntityDao.fetchAllContacts().map { birthdayEntities ->
+            birthdayEntities.map { it.toContactCardInfo(formatter = formatter) }
+                .sortedBy { it.name }
+        }
+    }
+
+    override fun fetchAllBirthdays(): Flow<List<BirthdayCardInfo>> {
+        val today = LocalDate.now()
+        val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+
+        return birthdayEntityDao.getAllContactsSortedByMonth().map { list ->
+            list.map { birthdayEntity ->
+                val sortingDate =
+                    birthdayEntity.birthdate
+                        .withYear(today.year)
+                        .let { date ->
+                            if (date.isBefore(today)) date.plusYears(1) else date
+                        }
+
+                BirthdayCardInfo(
+                    contactId = birthdayEntity.contactId,
+                    name = birthdayEntity.name,
+                    date = birthdayEntity.birthdate.format(formatter),
+                    dateUsedForSorting = sortingDate
+                )
+            }.sortedBy { it.dateUsedForSorting }
         }
     }
 
     override fun getListOfContacts(): List<UIBirthdayData> {
         return birthdayEntityDao.getAllContacts().map { birthdayEntity ->
-            birthdayBiMapper.convert(birthdayEntity)
-        }
-    }
-
-    override suspend fun fetchAllBirthdays(): Flow<List<GroupedUIBirthdayData>> {
-        val months = listOf(
-            "JANUARY", "FEBRUARY", "MARCH", "APRIL",
-            "MAY", "JUNE", "JULY", "AUGUST",
-            "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
-        )
-        val calendar = Calendar.getInstance()
-        val dateUtils = DateUtils()
-        return birthdayEntityDao.fetchAllBirthdays().map { birthdayEntities ->
-            birthdayEntities
-                .asSequence()
-                .map { birthdayBiMapper.convert(it) }
-                .map { uiBirthdayData ->
-                    uiBirthdayData.copy(
-                        birthdateString = dateUtils.convertDate(uiBirthdayData.birthdateMillis)
-                    )
-                }
-                .groupBy {
-                    calendar.timeInMillis = it.birthdateMillis
-                    calendar.get(Calendar.MONTH)
-                }
-                .map {
-                    GroupedUIBirthdayData(
-                        monthName = months[it.key],
-                        monthNumber = it.key,
-                        birthdayList = it.value
-                    )
-                }
-                .sortedBy { it.monthNumber }
-                .toList()
-                .let { rotateMonthsByCurrentMonth(it) }
+            birthdayEntity.toUIBirthdayData()
         }
     }
 
     override suspend fun checkTodayBirthday(date: String): List<UIBirthdayData> {
         Log.d("today date", date)
         return birthdayEntityDao.checkTodayBirthday(date = date)
-            .map { birthdayBiMapper.convert(it) }
+            .map { it.toUIBirthdayData() }
     }
 
     override suspend fun updateBirthdayNote(
@@ -100,17 +91,16 @@ class BirthdayRepositoryImpl @Inject constructor(
             name = name,
             mobileNumber = mobileNumber,
             birthdate = birthdate,
-            reminderTime = reminderTime,
             note = note
         )
     }
 
     override suspend fun getPersonProfile(contactId: Int): UIBirthdayData {
         return birthdayEntityDao.getPersonProfile(id = contactId)
-            .let { birthdayBiMapper.convert(it) }
+            .let { it.toUIBirthdayData() }
     }
 
     override suspend fun getUpcomingBirthdayToSchedule(): UIBirthdayData? {
-        return birthdayEntityDao.getUpcomingBirthday()?.let { birthdayBiMapper.convert(it) }
+        return birthdayEntityDao.getUpcomingBirthday()?.let { it.toUIBirthdayData() }
     }
 }

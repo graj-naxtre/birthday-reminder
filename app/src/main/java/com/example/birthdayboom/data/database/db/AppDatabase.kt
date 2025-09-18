@@ -4,11 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.example.birthdayboom.data.database.converters.DateConverters
 import com.example.birthdayboom.data.database.dao.BirthdayEntityDao
 import com.example.birthdayboom.data.database.entity.BirthdayEntity
 
-
-@Database(entities = [BirthdayEntity::class], version = 3, exportSchema = true)
+@Database(entities = [BirthdayEntity::class], version = 1)
+@TypeConverters(DateConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun birthdayEntityDao(): BirthdayEntityDao
 
@@ -17,19 +19,16 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): AppDatabase? {
             if (INSTANCE == null) {
-                synchronized(AppDatabase::class) {
+                synchronized(this) {
                     INSTANCE = Room.databaseBuilder(
                         context.applicationContext,
                         AppDatabase::class.java,
                         "birthday.db"
-                    ).fallbackToDestructiveMigration().build()
+                    ).fallbackToDestructiveMigration(true)
+                        .build()
                 }
             }
             return INSTANCE
-        }
-
-        fun destroyInstance(){
-            INSTANCE = null
         }
     }
 }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Birthday Boom</string>
+
+    <string name="notification_permission">Notification permission is required</string>
 </resources>

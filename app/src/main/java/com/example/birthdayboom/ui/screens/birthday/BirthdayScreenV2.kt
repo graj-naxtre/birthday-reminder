@@ -35,7 +35,6 @@ import com.example.birthdayboom.ui.screens.birthday.components.Communication
 import com.example.birthdayboom.ui.screens.birthday.components.ContactCard
 import com.example.birthdayboom.ui.screens.contact.components.NotifyMeDialog
 
-@OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
 fun BirthdayScreenV2(viewModel: BirthdayViewModel = hiltViewModel()) {

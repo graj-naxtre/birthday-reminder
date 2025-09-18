@@ -1,4 +1,4 @@
-package com.example.birthdayboom.ui.screens.contact.utils
+package com.example.birthdayboom.utils
 
 import com.example.birthdayboom.data.database.models.UIBirthdayData
 import java.text.SimpleDateFormat

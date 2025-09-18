@@ -1,8 +1,6 @@
-package com.example.birthdayboom.ui.screens.contact.components
+package com.example.birthdayboom.ui.screens.home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,21 +12,23 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.birthdayboom.ui.providers.LocalThemeProvider
+import java.time.LocalDate
+
+data class BirthdayCardInfo(
+    val contactId: Int,
+    val name: String,
+    val date: String,
+    val dateUsedForSorting: LocalDate
+)
 
 @Composable
-fun ContactCard(
+fun BirthdayCard(
     modifier: Modifier = Modifier,
-    data: ContactCardInfo,
+    data: BirthdayCardInfo,
     onClick: () -> Unit,
 ) {
-    val currentTheme = LocalThemeProvider.current
-
     ElevatedCard(
         modifier = modifier.fillMaxWidth(),
         onClick = onClick,
@@ -43,19 +43,6 @@ fun ContactCard(
                 .fillMaxWidth()
                 .height(80.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(0.25f)
-                    .background(color = currentTheme.secondaryColor)
-                    .padding(20.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = data.initials,
-                    color = currentTheme.textPrimaryColor
-                )
-            }
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -69,10 +56,3 @@ fun ContactCard(
         }
     }
 }
-
-data class ContactCardInfo(
-    val contactId: Int,
-    val name: String,
-    val initials: String,
-    val date: String,
-)

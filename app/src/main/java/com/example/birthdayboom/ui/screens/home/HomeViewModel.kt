@@ -1,4 +1,4 @@
-package com.example.birthdayboom.ui.screens.contact
+package com.example.birthdayboom.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,44 +13,25 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ContactViewModel @Inject constructor(
+class HomeViewModel @Inject constructor(
     private val birthdayRepository: BirthdayRepository,
 ) : ViewModel() {
-
     private var collectionJob: Job? = null
 
-    private val _allBirthdayContacts = MutableStateFlow<List<ContactCardInfo>>(emptyList())
+    private val _allBirthdayContacts = MutableStateFlow<List<BirthdayCardInfo>>(emptyList())
     val allBirthdayContacts = _allBirthdayContacts.asStateFlow()
 
-    private val completeContactsList = MutableStateFlow<List<ContactCardInfo>>(emptyList())
-
     init {
-        initializeContacts()
+        initializeBirthdays()
     }
 
-    private fun initializeContacts(){
+    private fun initializeBirthdays(){
         collectionJob?.cancel()
 
         collectionJob = viewModelScope.launch {
-            birthdayRepository.fetchAllContacts().collect { list ->
-                completeContactsList.value = list
-
+            birthdayRepository.fetchAllBirthdays().collect { list ->
                 _allBirthdayContacts.update { list }
             }
-        }
-    }
-
-    fun searchByContactName(searchText: String) {
-        if(searchText.isNotEmpty()){
-            val filteredContacts = completeContactsList.value.filter {
-                it.name.startsWith(searchText)
-            }
-
-            _allBirthdayContacts.update {
-                filteredContacts
-            }
-        } else {
-            initializeContacts()
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.birthdayboom.ui.state
+package com.example.birthdayboom.ui.providers
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue

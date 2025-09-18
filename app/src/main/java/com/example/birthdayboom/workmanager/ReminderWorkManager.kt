@@ -14,7 +14,7 @@ import androidx.work.WorkerParameters
 import com.example.birthdayboom.data.PreferenceKey
 import com.example.birthdayboom.data.database.models.UIBirthdayData
 import com.example.birthdayboom.data.repositories.BirthdayRepository
-import com.example.birthdayboom.ui.screens.contact.utils.DateUtils
+import com.example.birthdayboom.utils.DateUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.util.Calendar

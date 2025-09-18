@@ -1,4 +1,4 @@
-package com.example.birthdayboom.ui.screens.contact.components
+package com.example.birthdayboom.ui.components
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
