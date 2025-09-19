@@ -42,13 +42,13 @@ fun ContactSearchHeader(value: String, onValueChange: (String) -> Unit) {
             trailingIcon = {
                 Box(
                     modifier = Modifier
-                        .background(color = Color.Black, shape = CircleShape)
+                        .background(color = currentTheme.primaryColor, shape = CircleShape)
                         .padding(5.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Search,
                         contentDescription = "Search Icon",
-                        tint = Color.White
+                        tint = Color.Black
                     )
                 }
             },

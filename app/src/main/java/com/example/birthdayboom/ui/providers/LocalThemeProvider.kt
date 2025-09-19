@@ -60,7 +60,7 @@ val darkThemeColor = AppColorScheme(
     surfaceColor = Color(0xFF1E1E1E),
     cardColor = Color(0xFF1E1E1E),
 
-    primaryColor = Color(0xFFBB86FC),
+    primaryColor = Color(0xFFFFC7A7), //  BB86FC
     onPrimaryColor = Color(0xFF000000),
     secondaryColor = Color(0xFF03DAC6),
     onSecondaryColor = Color(0xFF000000),

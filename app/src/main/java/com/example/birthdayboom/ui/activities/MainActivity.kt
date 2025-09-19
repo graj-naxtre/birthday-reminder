@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity(), IPermissionDelegate by PermissionDeleg
                 Box(modifier = Modifier.fillMaxSize()) {
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
-                        containerColor = currentTheme.backgroundColor,
+                        containerColor = currentTheme.surfaceColor,
                         contentColor = currentTheme.textPrimaryColor,
                         floatingActionButton = {
                             FloatingAddContactButton()

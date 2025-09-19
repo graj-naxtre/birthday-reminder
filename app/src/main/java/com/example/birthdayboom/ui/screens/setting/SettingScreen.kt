@@ -15,9 +15,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,11 +30,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.example.birthdayboom.ui.providers.LocalThemeProvider
 
 @Composable
 fun SettingScreen(viewModel: SettingViewModel = hiltViewModel()) {
@@ -75,7 +78,8 @@ fun SettingScreen(viewModel: SettingViewModel = hiltViewModel()) {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             SettingsItem(
-                text = "Export Data",
+                title = "Export Data",
+                text = "convert into CSV format and save",
                 onClick = {
                     viewModel.exportData { intent ->
                         exportFileActivityLauncher.launch(intent)
@@ -83,16 +87,14 @@ fun SettingScreen(viewModel: SettingViewModel = hiltViewModel()) {
                 }
             )
             SettingsItem(
-                text = "Import Data",
+                title = "Import Data",
+                text = "import birthdays using CSV file",
                 onClick = {
                     viewModel.importData { intent ->
                         importFileActivityLauncher.launch(intent)
                     }
                 }
             )
-            selectedUri?.let {
-                Text(text = "$it")
-            }
         }
     }
 }
@@ -101,52 +103,64 @@ fun SettingScreen(viewModel: SettingViewModel = hiltViewModel()) {
 fun SettingsHeader() {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .background(color = Color.Black)
-            .statusBarsPadding()
-            .padding(20.dp)
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "Settings",
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = Color.White
+            modifier = Modifier.padding(20.dp)
         )
+        HorizontalDivider()
     }
 }
 
 @Composable
-fun SettingsItem(text: String, onClick: () -> Unit) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .then(remember {
-                Modifier.clickable { onClick() }
-            })
-            .background(
-                color = MaterialTheme.colorScheme.primaryContainer,
-                shape = MaterialTheme.shapes.large
-            )
-            .padding(horizontal = 16.dp, vertical = 20.dp)
-    ) {
-        Box {
-            Icon(
-                imageVector = Icons.Outlined.DateRange,
-                contentDescription = "calendar",
-                modifier = Modifier.size(30.dp),
-            )
+fun SettingsItem(title: String, text: String, onClick: () -> Unit) {
+    val currentTheme = LocalThemeProvider.current
+
+    Column {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 20.dp)
+        ) {
+            Box(
+                modifier = Modifier.background(
+                    color = currentTheme.primaryColor,
+                    shape = CircleShape
+                ).padding(5.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.DateRange,
+                    contentDescription = "calendar",
+                    modifier = Modifier.size(30.dp),
+                )
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = title, style = MaterialTheme.typography.labelMedium)
+                Text(text = text, style = MaterialTheme.typography.labelSmall)
+            }
+            Box {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                    contentDescription = "arrow",
+                    modifier = Modifier.size(30.dp),
+                )
+            }
         }
-        Box(modifier = Modifier.weight(1f)) {
-            Text(text = text)
-        }
-        Box {
-            Icon(
-                imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
-                contentDescription = "arrow",
-                modifier = Modifier.size(30.dp),
-            )
-        }
+        HorizontalDivider(color = currentTheme.dividerColor)
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewSettingsItem(){
+    SettingsItem(title = "Export Contacts", text = "convert into CSV format and save") { }
+}
+
