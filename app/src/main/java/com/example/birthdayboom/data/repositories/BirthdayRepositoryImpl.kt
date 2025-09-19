@@ -1,9 +1,7 @@
 package com.example.birthdayboom.data.repositories
 
-import android.util.Log
 import com.example.birthdayboom.data.database.dao.BirthdayEntityDao
 import com.example.birthdayboom.data.database.entity.BirthdayEntity
-import com.example.birthdayboom.data.database.models.UIBirthdayData
 import com.example.birthdayboom.ui.screens.contact.components.ContactCardInfo
 import com.example.birthdayboom.ui.screens.home.BirthdayCardInfo
 import kotlinx.coroutines.flow.Flow
@@ -66,41 +64,18 @@ class BirthdayRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getListOfContacts(): List<UIBirthdayData> {
-        return birthdayEntityDao.getAllContacts().map { birthdayEntity ->
-            birthdayEntity.toUIBirthdayData()
+    override fun fetchAllBirthdaysToday(): List<BirthdayEntity> {
+        val today = LocalDate.now()
+
+        return birthdayEntityDao.getAllContacts().filter { birthdayEntity ->
+            birthdayEntity.birthdate.isEqual(today)
         }
     }
 
-    override suspend fun checkTodayBirthday(date: String): List<UIBirthdayData> {
-        Log.d("today date", date)
-        return birthdayEntityDao.checkTodayBirthday(date = date)
-            .map { it.toUIBirthdayData() }
-    }
+    override suspend fun setMockData(mockContacts: List<BirthdayEntity>): Result<Unit> = runCatching {
+        if(birthdayEntityDao.getContactsCount() != 0) return@runCatching
 
-    override suspend fun updateBirthdayNote(
-        id: Int,
-        name: String,
-        mobileNumber: String,
-        birthdate: String,
-        reminderTime: String,
-        note: String
-    ) {
-        birthdayEntityDao.updateBirthdayNote(
-            id = id,
-            name = name,
-            mobileNumber = mobileNumber,
-            birthdate = birthdate,
-            note = note
-        )
-    }
-
-    override suspend fun getPersonProfile(contactId: Int): UIBirthdayData {
-        return birthdayEntityDao.getPersonProfile(id = contactId)
-            .let { it.toUIBirthdayData() }
-    }
-
-    override suspend fun getUpcomingBirthdayToSchedule(): UIBirthdayData? {
-        return birthdayEntityDao.getUpcomingBirthday()?.let { it.toUIBirthdayData() }
+//        birthdayEntityDao.deleteAllContacts()
+        birthdayEntityDao.addBirthdaysList(birthdayList = mockContacts)
     }
 }

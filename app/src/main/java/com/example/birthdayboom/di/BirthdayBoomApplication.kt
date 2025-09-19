@@ -10,6 +10,7 @@ import javax.inject.Inject
 class BirthdayBoomApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
+
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder().setWorkerFactory(workerFactory)
             .setMinimumLoggingLevel(android.util.Log.ERROR).build()

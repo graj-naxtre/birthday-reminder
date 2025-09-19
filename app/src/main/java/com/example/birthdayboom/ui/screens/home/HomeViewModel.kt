@@ -3,7 +3,6 @@ package com.example.birthdayboom.ui.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.birthdayboom.data.repositories.BirthdayRepository
-import com.example.birthdayboom.ui.screens.contact.components.ContactCardInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow

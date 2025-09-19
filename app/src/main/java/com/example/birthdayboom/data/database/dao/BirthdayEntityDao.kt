@@ -17,6 +17,9 @@ interface BirthdayEntityDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addBirthday(birthday: BirthdayEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addBirthdaysList(birthdayList: List<BirthdayEntity>)
+
     @Query("SELECT * FROM birthdays")
     fun fetchAllContacts(): Flow<List<BirthdayEntity>>
 
@@ -26,11 +29,8 @@ interface BirthdayEntityDao {
     @Query("SELECT * FROM birthdays")
     fun getAllContacts(): List<BirthdayEntity>
 
-    @Query("SELECT * FROM birthdays WHERE SUBSTR(birthdate, 1, 5) = :date")
-    suspend fun checkTodayBirthday(date: String): List<BirthdayEntity>
-
     @Query("UPDATE birthdays SET NAME = :name, BIRTHDATE = :birthdate, MOBILE_NUMBER = :mobileNumber, NOTE = :note WHERE contactId = :id")
-    suspend fun updateBirthdayNote(
+    suspend fun updateBirthdayDetails(
         id: Int,
         name: String,
         mobileNumber: String,
@@ -38,9 +38,9 @@ interface BirthdayEntityDao {
         note: String
     )
 
-    @Query("SELECT * FROM birthdays WHERE contactId = :id")
-    suspend fun getPersonProfile(id: Int): BirthdayEntity
+    @Query("SELECT COUNT(*) FROM birthdays")
+    suspend fun getContactsCount() : Int
 
-    @Query("SELECT * FROM birthdays ORDER BY birthdate ASC LIMIT 1")
-    suspend fun getUpcomingBirthday() : BirthdayEntity?
+    @Query("DELETE FROM birthdays")
+    suspend fun deleteAllContacts()
 }

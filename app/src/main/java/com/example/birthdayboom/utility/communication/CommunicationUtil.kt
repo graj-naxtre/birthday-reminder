@@ -1,4 +1,4 @@
-package com.example.birthdayboom.utils
+package com.example.birthdayboom.utility.communication
 
 import android.annotation.SuppressLint
 import android.content.Context

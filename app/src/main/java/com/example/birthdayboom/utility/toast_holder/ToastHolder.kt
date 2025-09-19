@@ -1,4 +1,4 @@
-package com.example.birthdayboom.utils.toast_holder
+package com.example.birthdayboom.utility.toast_holder
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

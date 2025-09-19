@@ -1,19 +1,12 @@
 package com.example.birthdayboom.data.repositories
 
-import com.example.birthdayboom.data.database.models.GroupedUIBirthdayData
-import com.example.birthdayboom.data.database.models.UIBirthdayData
+import com.example.birthdayboom.data.database.entity.BirthdayEntity
 import com.example.birthdayboom.ui.screens.contact.components.ContactCardInfo
 import com.example.birthdayboom.ui.screens.home.BirthdayCardInfo
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
 interface BirthdayRepository {
-
-    fun fetchAllContacts(): Flow<List<ContactCardInfo>>
-
-    fun fetchAllBirthdays(): Flow<List<BirthdayCardInfo>>
-
-    fun getListOfContacts(): List<UIBirthdayData>
 
     suspend fun addBirthday(
         name: String,
@@ -22,14 +15,11 @@ interface BirthdayRepository {
         note: String
     ) : Result<Unit>
 
-    suspend fun checkTodayBirthday(date: String): List<UIBirthdayData>
+    fun fetchAllContacts(): Flow<List<ContactCardInfo>>
 
-    suspend fun updateBirthdayNote(
-        id: Int, name: String, mobileNumber: String,
-        birthdate: String, reminderTime: String, note: String
-    )
+    fun fetchAllBirthdays(): Flow<List<BirthdayCardInfo>>
 
-    suspend fun getPersonProfile(contactId: Int): UIBirthdayData
+    fun fetchAllBirthdaysToday() : List<BirthdayEntity>
 
-    suspend fun getUpcomingBirthdayToSchedule(): UIBirthdayData?
+    suspend fun setMockData(mockContacts: List<BirthdayEntity>) : Result<Unit>
 }

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"
@@ -43,6 +44,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="com.example.birthdayboom.androidx-startup"
@@ -54,13 +56,6 @@
                 android:value="androidx.startup"
                 tools:node="remove" />
         </provider>
-        <receiver
-            android:name="com.example.birthdayboom.workmanager.NotificationReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </receiver>
+
     </application>
 </manifest>

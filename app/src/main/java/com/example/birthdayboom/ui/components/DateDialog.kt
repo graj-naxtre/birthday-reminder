@@ -17,7 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.birthdayboom.utils.getMillisToDate
+import com.example.birthdayboom.utility.helper.getMillisToDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

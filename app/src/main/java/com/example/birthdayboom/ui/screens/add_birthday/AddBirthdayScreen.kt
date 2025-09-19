@@ -23,7 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.birthdayboom.ui.components.PrimaryButton
 import com.example.birthdayboom.ui.components.PrimaryTextField
 import com.example.birthdayboom.ui.providers.LocalNavigationProvider
-import com.example.birthdayboom.utils.getTodayDate
+import com.example.birthdayboom.utility.helper.getTodayDate
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate

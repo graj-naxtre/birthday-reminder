@@ -35,10 +35,10 @@ import com.example.birthdayboom.ui.providers.LocalThemeProvider
 import com.example.birthdayboom.ui.providers.darkThemeColor
 import com.example.birthdayboom.ui.providers.lightThemeColor
 import com.example.birthdayboom.ui.components.BottomSheetMenu
-import com.example.birthdayboom.utils.permission.IPermissionDelegate
-import com.example.birthdayboom.utils.permission.PermissionDelegate
-import com.example.birthdayboom.utils.permission.PermissionState
-import com.example.birthdayboom.utils.toast_holder.ToastHolder
+import com.example.birthdayboom.utility.permission.IPermissionDelegate
+import com.example.birthdayboom.utility.permission.PermissionDelegate
+import com.example.birthdayboom.utility.permission.PermissionState
+import com.example.birthdayboom.utility.toast_holder.ToastHolder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -126,6 +126,8 @@ class MainActivity : ComponentActivity(), IPermissionDelegate by PermissionDeleg
                 }
             }
         }
+
+        scheduleDailyWorker(activity = this)
     }
 
     override fun onResume() {

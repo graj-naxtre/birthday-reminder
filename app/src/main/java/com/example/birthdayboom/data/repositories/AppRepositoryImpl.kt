@@ -9,8 +9,8 @@ import android.widget.Toast
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.example.birthdayboom.data.database.dao.BirthdayEntityDao
 import com.example.birthdayboom.data.database.db.AppDatabase
-import com.example.birthdayboom.utils.CSVReader
-import com.example.birthdayboom.utils.CSVWriter
+import com.example.birthdayboom.utility.csv.CSVReader
+import com.example.birthdayboom.utility.csv.CSVWriter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File

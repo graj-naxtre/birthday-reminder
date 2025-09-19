@@ -1,4 +1,4 @@
-package com.example.birthdayboom.ui.screens.birthday.components
+package com.example.birthdayboom.utility.communication
 
 sealed class Communication {
     data class MakeCall(val number: String) : Communication()

@@ -1,13 +1,12 @@
-package com.example.birthdayboom.utils.permission
+package com.example.birthdayboom.utility.permission
 
 import android.app.Activity
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
 
 interface IPermissionDelegate {
 
     fun redirectToSettings(activity: Activity)
 
     fun isNotificationPermissionGranted(activity: Activity) : PermissionState
+
+    fun scheduleDailyWorker(activity: Activity)
 }

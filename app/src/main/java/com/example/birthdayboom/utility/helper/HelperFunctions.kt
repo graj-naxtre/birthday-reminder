@@ -1,17 +1,19 @@
-package com.example.birthdayboom.utils
+package com.example.birthdayboom.utility.helper
 
 import android.icu.util.Calendar
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+fun String.isValidPhoneNumber() : Boolean {
+    val regex = "^[0-9]{10}$".toRegex()
+    return this.matches(regex)
+}
 
 fun getTodayDate(): String {
     val dateFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
     return dateFormatter.format(Date())
 }
-
-
 
 fun getMillisToDate(selectedDateMillis: Long?): String {
     val dateFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
@@ -20,22 +22,4 @@ fun getMillisToDate(selectedDateMillis: Long?): String {
         calendar.timeInMillis = selectedDateMillis
     }
     return dateFormatter.format(calendar.time)
-}
-
-fun delayInSeconds(date: String, hour: String, minute: String): Long {
-    val todayDateTime = Calendar.getInstance()
-    return todayDateTime.timeInMillis / 1000L
-}
-
-fun extractInitials(name: String): String {
-    var initials = ""
-    name.trim().split(" ").forEach { word ->
-        initials += word[0]
-    }
-
-    if(initials.isEmpty()){
-        initials = "${name[0]}"
-    }
-    
-    return initials
 }
